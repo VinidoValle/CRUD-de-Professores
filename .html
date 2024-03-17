@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD de Professores</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    form {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #45a049;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>CRUD de Professores</h1>
+
+    <!-- Formulário para adicionar/editar professores -->
+    <form id="professorForm">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="salary">Salário:</label>
+        <input type="number" id="salary" name="salary" required>
+
+        <label for="hireDate">Data de Admissão:</label>
+        <input type="date" id="hireDate" name="hireDate" required>
+
+        <input type="hidden" id="professorId">
+        <button type="submit" class="btn">Salvar</button>
+    </form>
+    
+    <!-- Tabela para listar professores -->
+    <table id="professorTable">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Salário</th>
+                <th>Data de Admissão</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados dos professores serão inseridos aqui via JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Simulação de dados de professores (pode ser substituído por dados reais de backend)
+    let professores = [
+        { id: 1, name: "João Silva", email: "joao@exemplo.com", salary: 3000, hireDate: "15/01/2022" },
+        { id: 2, name: "Maria Santos", email: "maria@exemplo.com", salary: 3500, hireDate: "20/11/2021" }
+    ];
+
+    // Função para renderizar a tabela de professores
+    function renderProfessorTable() {
+        const tableBody = document.querySelector("#professorTable tbody");
+        tableBody.innerHTML = "";
+        
+        professores.forEach(professor => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${professor.name}</td>
+                <td>${professor.email}</td>
+                <td>${professor.salary}</td>
+                <td>${professor.hireDate}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="editProfessor(${professor.id})">Editar</button>
+                    <button class="btn btn-delete" onclick="deleteProfessor(${professor.id})">Deletar</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    // Função para adicionar/editar um professor
+    function saveProfessor(event) {
+        event.preventDefault();
+        const id = parseInt(document.querySelector("#professorId").value) || Math.floor(Math.random() * 1000) + 1;
+        const name = document.querySelector("#name").value;
+        const email = document.querySelector("#email").value;
+        const salary = parseFloat(document.querySelector("#salary").value);
+        const hireDate = document.querySelector("#hireDate").value;
+
+        const professor = { id, name, email, salary, hireDate };
+
+        const existingProfessorIndex = professores.findIndex(p => p.id === id);
+        if (existingProfessorIndex !== -1) {
+            professores[existingProfessorIndex] = professor;
+        } else {
+            professores.push(professor);
+        }
+
+        document.querySelector("#professorForm").reset();
+        renderProfessorTable();
+    }
+
+    // Função para editar um professor
+    function editProfessor(id) {
+        const professor = professores.find(p => p.id === id);
+        if (professor) {
+            document.querySelector("#professorId").value = professor.id;
+            document.querySelector("#name").value = professor.name;
+            document.querySelector("#email").value = professor.email;
+            document.querySelector("#salary").value = professor.salary;
+            document.querySelector("#hireDate").value = professor.hireDate;
+        }
+    }
+
+    // Função para deletar um professor
+    function deleteProfessor(id) {
+        professores = professores.filter(p => p.id !== id);
+        renderProfessorTable();
+    }
+
+    // Event listener para o formulário de professor
+    document.querySelector("#professorForm").addEventListener("submit", saveProfessor);
+
+    // Renderiza a tabela inicialmente
+    renderProfessorTable();
+</script>
+</body>
+</html>
